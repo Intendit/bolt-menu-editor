@@ -6,11 +6,13 @@ use Bolt\Asset\File\JavaScript;
 use Bolt\Asset\File\Stylesheet;
 use Bolt\Controller\Zone;
 use Bolt\Extension\SimpleExtension;
+use Bolt\Extension\Bacboslab\Menueditor\Event\FieldBuilderEvent;
 use Bolt\Menu\MenuEntry;
 use Bolt\Translation\Translator as Trans;
 use Bolt\Version;
 use Silex\Application;
 use Silex\ControllerCollection;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -166,7 +168,19 @@ class MenueditorExtension extends SimpleExtension
             return new RedirectResponse($app['resources']->getUrl('currenturl'), 301);
         }
 
+        // Dispatch field builder event
+        $event = new FieldBuilderEvent();             
+        $app['dispatcher']->dispatch(FieldBuilderEvent::BUILD, $event);                
         // Get data and render backend view
+
+        // Add event fields in config
+        $eventContent = $event->getFields();
+        foreach ($eventContent as $items) {
+            foreach ($items as $item) {
+                $config['fields'][$item['key']] = $item['value'];
+            }
+        }
+
         $data = [
             'menus' => $app['config']->get('menu'),
             'menu_config' => $config,
