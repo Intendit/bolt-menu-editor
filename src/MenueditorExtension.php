@@ -37,8 +37,8 @@ class MenueditorExtension extends SimpleExtension
             : '/extend/menueditor'
         ;
 
-        $collection->match($baseUrl, [$this, 'menuEditor']);
-        $collection->match($baseUrl . '/search', [$this, 'menuEditorSearch']);
+        $collection->match($baseUrl, [$this, 'menuEditor'])->bind('menuEditor');
+        $collection->match($baseUrl . '/search', [$this, 'menuEditorSearch'])->bind('menuEditorSearch');
     }
 
     /**
@@ -47,11 +47,9 @@ class MenueditorExtension extends SimpleExtension
     protected function registerMenuEntries()
     {
         $config = $this->getConfig();
-        $menu = new MenuEntry('menueditor', 'menueditor');
-        $menu->setLabel(Trans::__(
-            'menueditor.menuitem',
-            ['DEFAULT' => 'Menu editor']
-        ))
+        $menu = new MenuEntry('menueditor');
+        $menu->setLabel(Trans::__('menueditor.menuitem', ['DEFAULT' => 'Menu editor']))
+            ->setRoute('menuEditor')
             ->setIcon('fa:bars')
             ->setPermission($config['permission']);
 
@@ -207,15 +205,19 @@ class MenueditorExtension extends SimpleExtension
                 ),
                 'menueditor.flash.removefield' => Trans::__(
                     'menueditor.flash.removefield',
-                    ['DEFAULT' => 'The field <strong>%1%</strong> has successfully been removed. Don\'t forget to safe your changes']
+                    ['DEFAULT' => 'The field <strong>%1%</strong> has successfully been removed. Don\'t forget to save your changes']
                 ),
                 'menueditor.flash.addedfield' => Trans::__(
                     'menueditor.flash.addedfield',
-                    ['DEFAULT' => 'The field <strong>%1%</strong> has successfully been added. Don\'t forget to safe your changes.']
+                    ['DEFAULT' => 'The field <strong>%1%</strong> has successfully been added. Don\'t forget to save your changes.']
                 ),
                 'menueditor.confirm.removefield' => Trans::__(
                     'menueditor.confirm.removefield',
                     ['DEFAULT' => 'Are you sure you want to remove the field: %1%?']
+                ),
+                'menueditor.flash.addeditem' => Trans::__(
+                    'menueditor.flash.addeditem',
+                    ['DEFAULT' => 'Your new menuitem <strong>%1%</strong> has successfully been added on the bottom of the menu.']
                 )
             ])
         ];
